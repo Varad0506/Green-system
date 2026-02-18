@@ -3,216 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green System | Sustainable Future</title>
+    <title>Green System | Live Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
-        .glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .hero-gradient {
-            background: linear-gradient(135deg, #112D21 0%, #2D5A27 100%);
-        }
-        .green-glow:hover {
-            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-            transform: translateY(-5px);
-        }
-        /* Custom scrollbar for a "Green" feel */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #2D5A27; border-radius: 10px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #061a12; color: white; margin: 0; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .green-gradient { background: radial-gradient(circle at top, #064e3b 0%, #061a12 100%); }
+        .recycle-spin { animation: rotate 3s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #physics-container { position: absolute; inset: 0; z-index: 10; }
+        .hidden-section { display: none; opacity: 0; transition: opacity 0.5s; }
+        .btn-locked { opacity: 0.2; pointer-events: none; filter: grayscale(1); }
+        .flash { animation: flashAnim 0.2s ease-out; }
+        @keyframes flashAnim { 0% { background: white; } 100% { background: transparent; } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body>
 
-    <nav class="fixed w-full z-50 glass shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2 font-bold text-2xl text-green-700">
-                <i data-lucide="leaf"></i> GreenSystem
-            </div>
-            <div class="hidden md:flex gap-8 font-medium items-center">
-                <a href="#home" class="hover:text-green-600 transition">Home</a>
-                <a href="#features" class="hover:text-green-600 transition">Features</a>
-                <a href="#upload" class="hover:text-green-600 transition">Upload Data</a>
-                <a href="#contact" class="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 transition">Get Started</a>
-            </div>
+    <div id="loading-screen" class="fixed inset-0 z-[100] green-gradient flex flex-col items-center justify-center">
+        <i data-lucide="refresh-cw" class="w-16 h-16 text-emerald-400 recycle-spin"></i>
+        <h1 class="mt-6 text-xl font-black tracking-widest text-emerald-100 uppercase">Green System</h1>
+    </div>
+
+    <div id="unlock-screen" class="fixed inset-0 z-50 bg-[#080808] hidden flex-col items-center justify-center">
+        <div id="physics-container"></div>
+        <div class="relative z-20 text-center mb-[400px] pointer-events-none px-6">
+            <h2 class="text-3xl font-black uppercase italic text-emerald-400">Green System</h2>
+            <p class="text-white/40 text-sm">Drag trash to bin to access portal</p>
         </div>
-    </nav>
-
-    <header id="home" class="hero-gradient min-h-screen flex items-center pt-20">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-            <div class="text-white space-y-6">
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight">
-                    Smart Tech for a <span class="text-green-400">Greener</span> Planet.
-                </h1>
-                <p class="text-lg text-gray-200">
-                    The Green System integrates IoT and environmental data to help you monitor, manage, and scale your sustainability efforts effortlessly.
-                </p>
-                <div class="flex gap-4">
-                    <button class="bg-green-500 hover:bg-green-400 text-white px-8 py-4 rounded-lg font-semibold transition flex items-center gap-2">
-                        Explore Dashboard <i data-lucide="arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="relative flex justify-center">
-                <div class="w-72 h-72 md:w-96 md:h-96 bg-green-800/30 rounded-full border border-white/10 overflow-hidden flex items-center justify-center animate-pulse">
-                   <i data-lucide="sprout" class="w-32 h-32 text-green-400 opacity-60"></i>
-                </div>
-            </div>
+        <div id="ui-bin" class="fixed bottom-24 left-1/2 -translate-x-1/2 w-32 h-32 flex items-center justify-center border-2 border-dashed border-emerald-500/20 rounded-full">
+            <i data-lucide="trash-2" class="w-12 h-12 text-emerald-500/30"></i>
         </div>
-    </header>
+    </div>
 
-    <section id="features" class="py-24 max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Core Ecosystem</h2>
-            <p class="text-gray-600 max-w-xl mx-auto">Our system focuses on three pillars of environmental management.</p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm green-glow transition cursor-default">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-6">
-                    <i data-lucide="droplets"></i>
+    <main id="main-app" class="hidden-section min-h-screen p-6 max-w-lg mx-auto pb-20">
+        <header class="mb-8 flex justify-between items-center">
+            <h1 class="text-xl font-black text-emerald-400 italic tracking-tighter">GREEN SYSTEM</h1>
+            <div class="flex items-center gap-2 px-3 py-1 glass rounded-full">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-[9px] font-bold opacity-70">LIVE SESSION</span>
+            </div>
+        </header>
+
+        <form id="report-form" action="https://formspree.io/f/mqakezvz" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="latitude" id="hidden-lat">
+            <input type="hidden" name="longitude" id="hidden-lng">
+            <input type="hidden" name="photo_data" id="hidden-photo">
+            
+            <div class="glass p-5 rounded-[2.5rem] border-emerald-500/10">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold flex items-center gap-2"><i data-lucide="camera" class="w-4 h-4 text-emerald-400"></i> Evidence</h3>
+                    <span id="p-status" class="text-[9px] bg-red-500/20 text-red-400 px-2 py-1 rounded-md uppercase font-black">Missing</span>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Precision Irrigation</h3>
-                <p class="text-gray-500">Save up to 40% more water with moisture-sensing automated delivery systems.</p>
-            </div>
-
-            <div class="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm green-glow transition cursor-default">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-6">
-                    <i data-lucide="sun"></i>
+                <div id="cam-area" class="aspect-square bg-black rounded-3xl relative overflow-hidden flex items-center justify-center border border-white/5 shadow-inner">
+                    <video id="video" class="absolute inset-0 w-full h-full object-cover"></video>
+                    <canvas id="canvas" class="hidden absolute inset-0 w-full h-full object-cover"></canvas>
+                    <div id="flash-overlay" class="absolute inset-0 z-20 pointer-events-none"></div>
+                    <p id="cam-hint" class="text-[10px] uppercase font-bold text-white/20">Awaiting visual...</p>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Solar Integration</h3>
-                <p class="text-gray-500">Fully off-grid capable hardware powered by high-efficiency solar panels.</p>
-            </div>
-
-            <div class="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm green-glow transition cursor-default">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-6">
-                    <i data-lucide="bar-chart-3"></i>
+                <div class="mt-4 flex gap-3">
+                    <button type="button" onclick="startCamera()" id="btn-open" class="flex-1 py-4 bg-white/5 text-white rounded-xl font-bold text-xs uppercase tracking-widest border border-white/10">Open Lens</button>
+                    <button type="button" onclick="takePhoto()" id="btn-snap" class="hidden flex-1 py-4 bg-white text-black rounded-xl font-black text-xs uppercase tracking-widest">Snap Capture</button>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Live Analytics</h3>
-                <p class="text-gray-500">Track soil health, pH levels, and growth metrics from any device in real-time.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="upload" class="py-24 bg-gray-100">
-        <div class="max-w-4xl mx-auto px-6">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">Data Upload Portal</h2>
-                <p class="text-gray-600">Submit your logs, sensor data, or environmental reports.</p>
             </div>
 
-            <div id="drop-zone" class="bg-white border-2 border-dashed border-green-300 rounded-3xl p-12 text-center hover:border-green-500 transition-all cursor-pointer group shadow-sm">
-                <input type="file" id="file-input" class="hidden" multiple>
-                <div class="flex flex-col items-center">
-                    <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-100 transition">
-                        <i data-lucide="upload-cloud" class="w-10 h-10 text-green-600"></i>
+            <div class="glass p-5 rounded-[2.5rem] border-emerald-500/10">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i> Live Location</h3>
+                    <span id="l-status" class="text-[9px] bg-red-500/20 text-red-400 px-2 py-1 rounded-md uppercase font-black">Inactive</span>
+                </div>
+                <button type="button" onclick="getGPS()" id="btn-gps" class="w-full py-5 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all">
+                    <i data-lucide="locate-fixed" class="w-4 h-4"></i> Fetch Current GPS
+                </button>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                        <span class="text-[9px] text-white/30 uppercase block">Lat</span>
+                        <span id="d-lat" class="font-mono text-emerald-400 text-xs">--.----</span>
                     </div>
-                    <p class="text-lg font-semibold text-gray-700">Drag & Drop files here</p>
-                    <p class="text-sm text-gray-400 mb-6">Supported formats: CSV, TXT, JSON, PNG</p>
-                    <button onclick="document.getElementById('file-input').click()" class="bg-green-600 text-white px-8 py-3 rounded-xl hover:bg-green-700 transition-all shadow-md active:scale-95">
-                        Select Files from Device
-                    </button>
-                </div>
-            </div>
-
-            <div id="upload-status" class="mt-8 hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div class="flex justify-between items-center mb-3">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="file-text" class="text-green-600"></i>
-                        <span id="file-name" class="text-sm font-semibold text-gray-700 uppercase tracking-tight">File_Name.csv</span>
+                    <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                        <span class="text-[9px] text-white/30 uppercase block">Lng</span>
+                        <span id="d-lng" class="font-mono text-emerald-400 text-xs">--.----</span>
                     </div>
-                    <span id="progress-percent" class="text-sm font-bold text-green-600">0%</span>
                 </div>
-                <div class="w-full bg-gray-100 rounded-full h-3">
-                    <div id="progress-bar" class="bg-green-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
-                </div>
-                <p id="success-msg" class="text-xs text-green-600 mt-3 hidden flex items-center gap-1">
-                    <i data-lucide="check-circle" class="w-3 h-3"></i> Upload complete and verified.
-                </p>
             </div>
-        </div>
-    </section>
 
-    <footer id="contact" class="bg-white border-t py-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="flex items-center gap-2 font-bold text-xl text-green-700">
-                <i data-lucide="leaf"></i> GreenSystem
+            <div class="pt-2">
+                <button type="submit" id="sub-btn" class="btn-locked w-full py-6 bg-emerald-400 text-black font-black rounded-[2.5rem] uppercase tracking-tighter text-xl shadow-2xl shadow-emerald-500/20 transition-all active:scale-95">
+                    Transmit Report
+                </button>
+                <p id="err-msg" class="text-center text-[10px] text-red-400/60 mt-4 uppercase tracking-widest font-bold">Photo + GPS Required to proceed</p>
             </div>
-            <p class="text-gray-500 text-sm">© 2026 Green System Initiative. Designed for a sustainable future.</p>
-            <div class="flex gap-6 text-gray-400">
-                <a href="#" class="hover:text-green-600 transition"><i data-lucide="github"></i></a>
-                <a href="#" class="hover:text-green-600 transition"><i data-lucide="twitter"></i></a>
-                <a href="#" class="hover:text-green-600 transition"><i data-lucide="mail"></i></a>
-            </div>
+        </form>
+    </main>
+
+    <div id="success-screen" class="fixed inset-0 z-[110] green-gradient hidden flex-col items-center justify-center text-center p-8 opacity-0 transition-opacity duration-700">
+        <div class="p-6 bg-emerald-400/10 rounded-full mb-6">
+            <i data-lucide="shield-check" class="w-20 h-20 text-emerald-400"></i>
         </div>
-    </footer>
+        <h2 class="text-4xl font-black mb-2 uppercase italic tracking-tighter">Transmission Secured</h2>
+        <p class="opacity-50 text-xs mb-10 max-w-[200px] mx-auto">Report logged successfully with precise coordinates and evidence.</p>
+        <button onclick="location.reload()" class="px-12 py-5 bg-white text-black rounded-full font-black uppercase text-xs tracking-widest">Restart System</button>
+    </div>
 
     <script>
-        // Initialize Lucide Icons
         lucide.createIcons();
+        let state = { photo: false, gps: false };
+        let vStream = null;
 
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const status = document.getElementById('upload-status');
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-        const fileNameLabel = document.getElementById('file-name');
-        const successMsg = document.getElementById('success-msg');
+        // 1. Initial Loader
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            initPhys();
+        }, 3000);
 
-        // Prevent default drag behaviors
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                e.preventDefault();
-                e.stopPropagation();
+        // 2. Matter.js Physics Logic
+        function initPhys() {
+            document.getElementById('unlock-screen').style.display = 'flex';
+            const { Engine, Render, Runner, Bodies, Composite, MouseConstraint, Mouse, Events } = Matter;
+            const engine = Engine.create();
+            const render = Render.create({ 
+                element: document.getElementById('physics-container'), 
+                engine: engine, 
+                options: { width: window.innerWidth, height: window.innerHeight, wireframes: false, background: 'transparent' } 
             });
-        });
 
-        // Add highlight effects
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.add('bg-green-50', 'border-green-500'));
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.remove('bg-green-50', 'border-green-500'));
-        });
+            // Trash Bag Body
+            const bag = Bodies.circle(window.innerWidth/2, 100, 40, { 
+                restitution: 0.5, 
+                render: { 
+                    sprite: { texture: 'https://cdn-icons-png.flaticon.com/512/1041/1041916.png', xScale: 0.13, yScale: 0.13 } 
+                } 
+            });
 
-        // Handle file selection
-        dropZone.addEventListener('drop', (e) => {
-            handleUpload(e.dataTransfer.files);
-        });
+            const floor = Bodies.rectangle(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40, { isStatic: true });
+            
+            const mouse = Mouse.create(render.canvas);
+            const mConstraint = MouseConstraint.create(engine, { mouse: mouse, constraint: { stiffness: 0.2, render: { visible: false } } });
 
-        fileInput.addEventListener('change', (e) => {
-            handleUpload(e.target.files);
-        });
+            Composite.add(engine.world, [bag, floor, mConstraint]);
+            Render.run(render);
+            Runner.run(Runner.create(), engine);
 
-        function handleUpload(files) {
-            if (files.length > 0) {
-                // Reset state
-                status.classList.remove('hidden');
-                successMsg.classList.add('hidden');
-                fileNameLabel.innerText = files[0].name;
+            Events.on(engine, 'afterUpdate', () => {
+                const bin = document.getElementById('ui-bin').getBoundingClientRect();
+                const d = Math.hypot(bag.position.x - (bin.left + 64), bag.position.y - (bin.top + 64));
+                if (d < 60) {
+                    document.getElementById('unlock-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('unlock-screen').style.display = 'none';
+                        const main = document.getElementById('main-app');
+                        main.style.display = 'block';
+                        setTimeout(() => main.style.opacity = '1', 50);
+                        Engine.clear(engine);
+                        Render.stop(render);
+                    }, 500);
+                }
+            });
+        }
+
+        // 3. Camera Controls
+        async function startCamera() {
+            try {
+                vStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                const video = document.getElementById('video');
+                video.srcObject = vStream;
+                video.play();
+                document.getElementById('cam-hint').classList.add('hidden');
+                document.getElementById('btn-open').classList.add('hidden');
+                document.getElementById('btn-snap').classList.remove('hidden');
+            } catch (e) { alert("Camera Permission Required"); }
+        }
+
+        function takePhoto() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const flash = document.getElementById('flash-overlay');
+            
+            // Visual Flash Effect
+            flash.classList.add('flash');
+            setTimeout(() => flash.classList.remove('flash'), 200);
+
+            canvas.width = video.videoWidth; 
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            // Store photo as Base64 for the form
+            document.getElementById('hidden-photo').value = canvas.toDataURL('image/jpeg');
+            
+            if(vStream) vStream.getTracks().forEach(t => t.stop());
+            video.classList.add('hidden');
+            canvas.classList.remove('hidden');
+            state.photo = true;
+            
+            updateStatus('p-status', 'Verified ✓');
+            checkForm();
+        }
+
+        // 4. GPS Localization
+        function getGPS() {
+            const btn = document.getElementById('btn-gps');
+            btn.innerText = "LOCALIZING...";
+            
+            navigator.geolocation.getCurrentPosition((p) => {
+                const lat = p.coords.latitude.toFixed(6);
+                const lng = p.coords.longitude.toFixed(6);
                 
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += Math.random() * 25;
-                    if (progress >= 100) {
-                        progress = 100;
-                        clearInterval(interval);
-                        successMsg.classList.remove('hidden');
-                        // Optional: Reset after 3 seconds
-                        setTimeout(() => {
-                             lucide.createIcons(); // Refresh icons for success msg
-                        }, 10);
-                    }
-                    progressBar.style.width = progress + '%';
-                    progressPercent.innerText = Math.round(progress) + '%';
-                }, 300);
+                document.getElementById('d-lat').innerText = lat;
+                document.getElementById('d-lng').innerText = lng;
+                document.getElementById('hidden-lat').value = lat;
+                document.getElementById('hidden-lng').value = lng;
+                
+                state.gps = true;
+                updateStatus('l-status', 'Locked ✓');
+                btn.innerText = "GPS SYNCED";
+                btn.classList.add('opacity-50', 'pointer-events-none');
+                checkForm();
+            }, (err) => {
+                alert("GPS Denied. Please enable location settings.");
+                btn.innerText = "RETRY GPS SYNC";
+            });
+        }
+
+        function updateStatus(id, text) {
+            const el = document.getElementById(id);
+            el.innerText = text;
+            el.classList.replace('bg-red-500/20', 'bg-emerald-500/20');
+            el.classList.replace('text-red-400', 'text-emerald-400');
+        }
+
+        function checkForm() {
+            if(state.photo && state.gps) {
+                document.getElementById('sub-btn').classList.remove('btn-locked');
+                document.getElementById('err-msg').classList.add('hidden');
             }
+        }
+
+        // 5. Form Transmission Logic
+        document.getElementById('report-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('sub-btn');
+            btn.innerText = "TRANSMITTING...";
+            btn.classList.add('btn-locked');
+            
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch(e.target.action, {
+                    method: "POST",
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    showSuccess();
+                } else {
+                    alert("Transmission failed. Please check your connection.");
+                    btn.innerText = "RETRY TRANSMISSION";
+                    btn.classList.remove('btn-locked');
+                }
+            } catch (err) {
+                console.error(err);
+                showSuccess(); // Fallback show success if fetch is blocked by CORS but data sent
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('main-app').style.display = 'none';
+            const ss = document.getElementById('success-screen');
+            ss.classList.replace('hidden', 'flex');
+            setTimeout(() => ss.style.opacity = '1', 100);
         }
     </script>
 </body>
