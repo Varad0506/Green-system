@@ -10,17 +10,22 @@
     <style>
         body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
         .glass {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
         .hero-gradient {
             background: linear-gradient(135deg, #112D21 0%, #2D5A27 100%);
         }
         .green-glow:hover {
-            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+            transform: translateY(-5px);
         }
+        /* Custom scrollbar for a "Green" feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #2D5A27; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -30,10 +35,10 @@
             <div class="flex items-center gap-2 font-bold text-2xl text-green-700">
                 <i data-lucide="leaf"></i> GreenSystem
             </div>
-            <div class="hidden md:flex gap-8 font-medium">
+            <div class="hidden md:flex gap-8 font-medium items-center">
                 <a href="#home" class="hover:text-green-600 transition">Home</a>
                 <a href="#features" class="hover:text-green-600 transition">Features</a>
-                <a href="#impact" class="hover:text-green-600 transition">Impact</a>
+                <a href="#upload" class="hover:text-green-600 transition">Upload Data</a>
                 <a href="#contact" class="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 transition">Get Started</a>
             </div>
         </div>
@@ -54,9 +59,9 @@
                     </button>
                 </div>
             </div>
-            <div class="relative">
-                <div class="w-full h-96 bg-green-800/30 rounded-3xl border border-white/10 overflow-hidden flex items-center justify-center">
-                   <i data-lucide="sprout" class="w-32 h-32 text-green-400 opacity-50 animate-bounce"></i>
+            <div class="relative flex justify-center">
+                <div class="w-72 h-72 md:w-96 md:h-96 bg-green-800/30 rounded-full border border-white/10 overflow-hidden flex items-center justify-center animate-pulse">
+                   <i data-lucide="sprout" class="w-32 h-32 text-green-400 opacity-60"></i>
                 </div>
             </div>
         </div>
@@ -95,43 +100,120 @@
         </div>
     </section>
 
-    <section id="impact" class="bg-green-900 py-20 text-white">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-                <div class="text-4xl font-bold mb-2">1.2M+</div>
-                <p class="text-green-300">Liters Saved</p>
+    <section id="upload" class="py-24 bg-gray-100">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Data Upload Portal</h2>
+                <p class="text-gray-600">Submit your logs, sensor data, or environmental reports.</p>
             </div>
-            <div>
-                <div class="text-4xl font-bold mb-2">50k+</div>
-                <p class="text-green-300">Trees Planted</p>
+
+            <div id="drop-zone" class="bg-white border-2 border-dashed border-green-300 rounded-3xl p-12 text-center hover:border-green-500 transition-all cursor-pointer group shadow-sm">
+                <input type="file" id="file-input" class="hidden" multiple>
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-100 transition">
+                        <i data-lucide="upload-cloud" class="w-10 h-10 text-green-600"></i>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-700">Drag & Drop files here</p>
+                    <p class="text-sm text-gray-400 mb-6">Supported formats: CSV, TXT, JSON, PNG</p>
+                    <button onclick="document.getElementById('file-input').click()" class="bg-green-600 text-white px-8 py-3 rounded-xl hover:bg-green-700 transition-all shadow-md active:scale-95">
+                        Select Files from Device
+                    </button>
+                </div>
             </div>
-            <div>
-                <div class="text-4xl font-bold mb-2">24/7</div>
-                <p class="text-green-300">Monitoring</p>
-            </div>
-            <div>
-                <div class="text-4xl font-bold mb-2">15</div>
-                <p class="text-green-300">Global Partners</p>
+
+            <div id="upload-status" class="mt-8 hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="file-text" class="text-green-600"></i>
+                        <span id="file-name" class="text-sm font-semibold text-gray-700 uppercase tracking-tight">File_Name.csv</span>
+                    </div>
+                    <span id="progress-percent" class="text-sm font-bold text-green-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-3">
+                    <div id="progress-bar" class="bg-green-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="success-msg" class="text-xs text-green-600 mt-3 hidden flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-3 h-3"></i> Upload complete and verified.
+                </p>
             </div>
         </div>
     </section>
 
     <footer id="contact" class="bg-white border-t py-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
             <div class="flex items-center gap-2 font-bold text-xl text-green-700">
                 <i data-lucide="leaf"></i> GreenSystem
             </div>
-            <p class="text-gray-500 text-sm">© 2026 Varad0506 - Green System Initiative. All rights reserved.</p>
-            <div class="flex gap-4">
-                <i data-lucide="github" class="cursor-pointer hover:text-green-600"></i>
-                <i data-lucide="twitter" class="cursor-pointer hover:text-green-600"></i>
-                <i data-lucide="mail" class="cursor-pointer hover:text-green-600"></i>
+            <p class="text-gray-500 text-sm">© 2026 Green System Initiative. Designed for a sustainable future.</p>
+            <div class="flex gap-6 text-gray-400">
+                <a href="#" class="hover:text-green-600 transition"><i data-lucide="github"></i></a>
+                <a href="#" class="hover:text-green-600 transition"><i data-lucide="twitter"></i></a>
+                <a href="#" class="hover:text-green-600 transition"><i data-lucide="mail"></i></a>
             </div>
         </div>
     </footer>
 
     <script>
+        // Initialize Lucide Icons
         lucide.createIcons();
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const status = document.getElementById('upload-status');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        const fileNameLabel = document.getElementById('file-name');
+        const successMsg = document.getElementById('success-msg');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+
+        // Add highlight effects
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('bg-green-50', 'border-green-500'));
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('bg-green-50', 'border-green-500'));
+        });
+
+        // Handle file selection
+        dropZone.addEventListener('drop', (e) => {
+            handleUpload(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleUpload(e.target.files);
+        });
+
+        function handleUpload(files) {
+            if (files.length > 0) {
+                // Reset state
+                status.classList.remove('hidden');
+                successMsg.classList.add('hidden');
+                fileNameLabel.innerText = files[0].name;
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 25;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        successMsg.classList.remove('hidden');
+                        // Optional: Reset after 3 seconds
+                        setTimeout(() => {
+                             lucide.createIcons(); // Refresh icons for success msg
+                        }, 10);
+                    }
+                    progressBar.style.width = progress + '%';
+                    progressPercent.innerText = Math.round(progress) + '%';
+                }, 300);
+            }
+        }
     </script>
 </body>
 </html>
